@@ -1,0 +1,67 @@
+version: '3.5'
+services:
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.15.1
+    restart: 'unless-stopped'
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+    links:
+      - mc_hub:mchub
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:6.5.2-ubuntu
+    restart: 'unless-stopped'
+    ports:
+      - 3000:3000
+    links:
+      - prometheus
+  setup_mchub:
+    container_name: setup_mchub
+    build:
+      context: ./plugin-installer
+    volumes:
+      - /home/clouduser/mc-hub/data:/data
+  mc_hub:
+    container_name: mc_hub
+    image: itzg/minecraft-server:20191126
+    depends_on:
+      - setup_mchub
+    restart: 'unless-stopped'
+    ports:
+      - 9225:9225
+    environment:
+      EULA: 'TRUE'
+      DIFFICULTY: 'peaceful'
+      TYPE: 'SPIGOT'
+      SEED: 965522458293220
+      VERSION: '1.15.1'
+      # ADMINS
+      WHITELIST: runewake2
+      OPS: runewake2
+      ONLINE_MODE: 'FALSE'
+      MODE: 2
+
+      # PLAYER SETTINGS
+      ANNOUNCE_PLAYER_ACHIEVEMENTS: 'FALSE'
+      MAX_PLAYERS: 50
+
+      # SERVER CONFIG
+      MAX_WORLD_SIZE: 1000
+      MEMORY: '2G'
+    volumes:
+      - /home/clouduser/mc-hub/data:/data
+    tty: true
+    stdin_open: true
+  bungeecord:
+    container_name: bungeecord
+    image: itzg/bungeecord:1.1.0
+    restart: 'unless-stopped'
+    ports:
+      - 25565:25577
+    volumes:
+      - ./config.yml:/server/config.yml
+    links:
+      - mc_hub:mchub
