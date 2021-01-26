@@ -1,0 +1,91 @@
+version: '3.5'
+services:
+  # Monitoring
+  mc_prometheus:
+    container_name: mc_prometheus
+    image: prom/prometheus:v2.15.1
+    restart: 'unless-stopped'
+    # It isn't necessary to expose this port, but by exposing we can
+    # integrate additional services with the prometheus database.
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+    networks:
+      minecraft-net:
+        aliases:
+          - 'mc_prometheus'
+          - 'prometheus'
+
+  mc_monitor:
+    container_name: mc_monitor
+    image: itzg/mc-monitor
+    command: export-for-prometheus
+    environment:
+      EXPORT_SERVERS: mc_bungeecord, minecraft.worldofzero.com
+      DEBUG: "true"
+    networks:
+      minecraft-net:
+        aliases:
+          - 'mc_monitor'
+          - 'monitor'
+
+  # Server Dashboards
+  mc_grafana:
+    container_name: mc_grafana
+    build:
+      context: grafana
+    depends_on:
+      - mc_prometheus
+    restart: 'unless-stopped'
+    ports:
+      - '3000:3000'
+    networks:
+      minecraft-net:
+        aliases:
+          - 'mc_grafana'
+          - 'grafana'
+    # Add additional visualization plugins
+    # See: https://grafana.com/docs/grafana/latest/installation/docker/
+    environment:
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+
+  # Bungeecord Server Proxy
+  mc_bungeecord:
+    container_name: mc_bungeecord
+    build:
+      context: ./bungeecord/
+    restart: 'unless-stopped'
+    depends_on: 
+      - mc_mysql
+    ports:
+      - 25565:25577
+    networks:
+      minecraft-net:
+        aliases:
+          - 'mc_bungeecord'
+          - 'bungeecord'
+
+  # Local MySQL DB
+  # Used to manage available servers and player permissions
+  mc_mysql:
+    container_name: mc_mysql
+    image: mysql:8.0
+    restart: 'unless-stopped'
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_USER: mc_user
+      MYSQL_PASSWORD: mc_password
+      MYSQL_DATABASE: mc_database
+    # Persist MySQL DB to disk
+    volumes:
+      - ${MINECRAFT_DIR}/mysql:/var/lib/mysql
+    networks:
+      minecraft-net:
+        aliases:
+          - 'mc_mysql'
+          - 'mysql'
+
+networks:
+  minecraft-net:
+    name: minecraft-net

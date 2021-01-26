@@ -6,6 +6,10 @@ Seed: `965522458293220` Main area at 1000, -500
 
 ![The Community Islands](resources/img/the-islands.png)
 
+## Passwords
+
+I've left many passwords as defaults in this public config. If you reuse this I recommend changing the database credentials first.
+
 ## References:
 
 - [itzg/minecraft-server Docker Image](https://github.com/itzg/docker-minecraft-server)

@@ -1,3 +1,6 @@
 # Ignore any temporary files we generate
 *.tmp
 tmp
+logs.txt
+new-servers
+**/.env

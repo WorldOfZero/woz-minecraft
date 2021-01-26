@@ -1,0 +1,31 @@
+version: '3.5'
+services:
+  mc_survival:
+    container_name: mc_survival
+    build:
+      context: ../minecraft-world/
+    restart: 'unless-stopped'
+    networks:
+      minecraft-net:
+        aliases:
+          - 'mc_survival'
+          - 'survival'
+    environment:
+      DIFFICULTY: 'hard'
+      SEED: 96351635
+      # ADMINS
+      OPS: runewake2
+      MODE: 2
+
+      # SERVER CONFIG
+      MAX_WORLD_SIZE: 250000
+      LEVEL_TYPE: 'default'
+    volumes:
+      - ${MINECRAFT_DIR}/worlds/mc-survival/data:/data
+    tty: true
+    stdin_open: true
+
+networks:
+  minecraft-net:
+    external:
+      name: minecraft-net

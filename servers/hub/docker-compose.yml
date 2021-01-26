@@ -1,0 +1,31 @@
+version: '3.5'
+services:
+  mc_hub:
+    container_name: mc_hub
+    build:
+      context: ../minecraft-world/
+    restart: 'unless-stopped'
+    networks:
+      minecraft-net:
+        aliases:
+          - 'mc_hub'
+          - 'hub'
+    environment:
+      DIFFICULTY: 'peaceful'
+      SEED: 965522458293220
+      # ADMINS
+      OPS: runewake2
+      MODE: 2
+
+      # SERVER CONFIG
+      MAX_WORLD_SIZE: 10000
+      LEVEL_TYPE: 'flat'
+    volumes:
+      - ${MINECRAFT_DIR}/worlds/mc-hub/data:/data
+    tty: true
+    stdin_open: true
+
+networks:
+  minecraft-net:
+    external:
+      name: minecraft-net
