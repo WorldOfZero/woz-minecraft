@@ -1,11 +1,10 @@
+forge_support: false
 connection_throttle_limit: 3
-timeout: 30000
 online_mode: true
 log_commands: false
-network_compression_threshold: 256
 listeners:
 - query_port: 25577
-  motd: '&1A World of Zero Minecraft Server'
+  motd: '&9The World of Zero Minecraft Server'
   priorities:
   - lobby
   bind_local_address: true
@@ -23,15 +22,17 @@ connection_throttle: 4000
 groups:
   runewake2:
   - admin
-  - all-access
+  - mod
+  - server-manager
 log_pings: true
-ip_forward: false
+ip_forward: true
 prevent_proxy_connections: false
-forge_support: false
+network_compression_threshold: 256
+stats: f2876aa6-74d2-468c-90ee-1377111f1c9f
 inject_commands: false
 disabled_commands:
 - disabledcommandhere
-stats: f2876aa6-74d2-468c-90ee-1377111f1c9f
+timeout: 30000
 permissions:
   default:
   - bungeecord.command.server
@@ -43,9 +44,28 @@ permissions:
   - bungeecord.command.end
   - bungeecord.command.ip
   - bungeecord.command.reload
+  mod:
+  - servermanager.help
+  - servermanager.servers.kick
+  - servermanager.goto
+  server-manager:
+  - smc.use
+  - servermanager.receiveinfo
+  - servermanager.help
+  - servermanager.servers.add
+  - servermanager.servers.delete
+  - servermanager.servers.reload
+  - servermanager.servers.list
+  - servermanager.servers.info
+  - servermanager.servers.enable
+  - servermanager.servers.disable
+  - servermanager.servers.setlobby
+  - servermanager.servers.setrestricted
+  - servermanager.servers.kick
+  - servermanager.goto
 servers:
   lobby:
     motd: '&1The World of Zero Minecraft Hub'
-    address: mchub
+    address: hub
     restricted: false
 player_limit: -1

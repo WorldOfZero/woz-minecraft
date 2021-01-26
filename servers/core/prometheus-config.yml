@@ -6,6 +6,9 @@ global:
 scrape_configs:
   - job_name: 'minecraft'
     static_configs:
-      - targets: ['mchub:9225']
+      - targets: ['mc_hub:9225']
         labels:
           server_name: 'hub'
+      - targets: ['mc_survival:9225']
+        labels:
+          server_name: 'survival'

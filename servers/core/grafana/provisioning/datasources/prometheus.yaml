@@ -1,0 +1,7 @@
+apiVersion: 1
+
+datasources:
+  - name: "minecraft-prometheus"
+    type: prometheus
+    access: proxy
+    url: http://mc_prometheus:9090
